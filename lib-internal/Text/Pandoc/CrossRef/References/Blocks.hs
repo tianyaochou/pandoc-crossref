@@ -237,11 +237,18 @@ replaceBlock opts cb@(CodeBlock (label, classes, attrs) code)
           replaceNoRecurse $ Div nullAttr [
               RawBlock (Format "latex") "\\begin{codelisting}"
             , Plain [
-                RawInline (Format "latex") "\\caption{"
+                RawInline (Format "latex") "\\label{"
+              , Str label
+              , RawInline (Format "latex") "}"
+              ]
+            , RawBlock (Format "latex") "\\begin{minted}[linenos,breaklines,frame=lines,fontsize=\\footnotesize]{cpp}"
+            , RawBlock (Format "latex") code
+            , RawBlock (Format "latex") "\\end{minted}"
+            , Plain [
+                RawInline (Format "latex") "\\captionof{listing}{"
               , Str caption
               , RawInline (Format "latex") "}"
               ]
-            , cb
             , RawBlock (Format "latex") "\\end{codelisting}"
             ]
       _ -> do
@@ -266,11 +273,18 @@ replaceBlock opts
         | isLatexFormat f ->
           replaceNoRecurse $ Div nullAttr [
               RawBlock (Format "latex") "\\begin{codelisting}"
+            , Plain [
+                RawInline (Format "latex") "\\label{"
+              , Str label
+              , RawInline (Format "latex") "}"
+              ]
+            , RawBlock (Format "latex") "\\begin{minted}[linenos,breaklines,frame=lines,fontsize=\\footnotesize]{text}"
+            , RawBlock (Format "latex") code
+            , RawBlock (Format "latex") "\\end{minted}"
             , Para [
-                RawInline (Format "latex") "\\caption"
+                RawInline (Format "latex") "\\captionof{listing}"
               , Span nullAttr caption
               ]
-            , CodeBlock (label,classes,attrs) code
             , RawBlock (Format "latex") "\\end{codelisting}"
             ]
       _ -> do
